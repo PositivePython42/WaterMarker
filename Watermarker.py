@@ -42,5 +42,6 @@ uploaded_file = st.file_uploader("Choose a file")
 #Main Programe Loop
 if uploaded_file is not None:
     input_text = st.text_input("Watermark Text :")
-    add_watermark_to_pdf(uploaded_file, input_text, 'watermarkedfile.pdf')
+    if input_text is not None:
+        add_watermark_to_pdf(uploaded_file, input_text, 'watermarkedfile.pdf')
 
