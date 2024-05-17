@@ -18,7 +18,7 @@ with st.expander('About This App'):
 st.header('Upload your data here')
 st.subheader('Please make sure the file is a PDF.')
 uploaded_file = st.file_uploader("Choose a file")
-if uploaded_file is not None:
+#if uploaded_file is not None:
     #put the code to ask for the text here
     
     #then a watermark now button to do the work!
