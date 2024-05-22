@@ -4,23 +4,35 @@ import streamlit as st
 from pathlib import Path
 from PyPDF2 import PdfWriter, PdfReader
 
-def add_watermark_to_pdf(content_pdf, watermark_text, 'output.pdf'):
-    # Create a watermark page with the specified text
-    watermark_page = PdfReader().add_page(width=100, height=100)
-    watermark_page.merge_text_watermark(watermark_text)
+def add_watermark_to_pdf(input_pdf, output_pdf_path, watermark_text):
+    """
+    Adds a watermark (text) to each page of the input PDF file.
 
-    # Read the original PDF
-    reader = PdfReader(content_pdf)
-    writer = PdfWriter()
+    Args:
+        input_pdf_path (str): Path to the input PDF file.
+        output_pdf_path (str): Path to save the output PDF file.
+        watermark_text (str): Text to be used as the watermark.
 
-    # Merge the watermark page with each page in the original PDF
-    for index, content_page in enumerate(reader.pages):
-        content_page.merge_page(watermark_page)
-        writer.add_page(content_page)
+    Returns:
+        None
+    """
+    pdf_reader = PdfReader(input_pdf)
+    pdf_writer = PdfWriter()
 
-    # Save the modified PDF with the watermark
-    with open('output.pdf', "wb") as fp:
-        writer.write(fp)
+    for page_num, page in enumerate(pdf_reader.pages, start=1):
+        # Create a new page with the watermark
+        watermark_page = pdf_reader.getPage(page_num)
+        watermark_page.mergePage(page)
+
+        # Add the watermark text
+        watermark_page.merge_text(watermark_text, x=100, y=100, fontsize=20)
+
+        # Add the modified page to the output PDF
+        pdf_writer.addPage(watermark_page)
+
+    # Save the output PDF
+    with open(output_pdf_path, "wb") as output_file:
+        pdf_writer.write(output_file)
 
 #Setup The Streamlit Screen
 st.set_page_config(layout="wide")
