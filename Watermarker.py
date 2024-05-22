@@ -1,4 +1,4 @@
-#WaterMarker v0.1, watermark your PDFs in a click beat!
+"""#WaterMarker v0.1, watermark your PDFs in a click beat!
 
 import streamlit as st
 from io import BytesIO
@@ -49,4 +49,45 @@ if uploaded_file is not None:
         data=watermarked_pdf,
         file_name="output.pdf",
         mime="application/pdf"
-    )
+    )"""
+
+import streamlit as st
+import PyPDF2
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+
+# Streamlit app
+def main():
+    st.title("PDF Watermark App")
+    uploaded_file = st.file_uploader("Upload a PDF file", type=["pdf"])
+
+    if uploaded_file:
+        # Read the uploaded PDF
+        pdf_reader = PyPDF2.PdfReader(uploaded_file)
+        pdf_writer = PyPDF2.PdfWriter()
+
+        # Get user input for watermark text
+        watermark_text = st.text_input("Enter watermark text:")
+
+        # Create a watermark PDF
+        with open("watermark.pdf", "w") as f:
+            pdf = canvas.Canvas(f, pagesize=letter)
+            pdf.setFillColorRGB(0.5, 0.5, 0.5, alpha=0.6)  # Set watermark color
+            pdf.setFont("Helvetica", 50)
+            pdf.rotate(45)
+            pdf.drawCentredString(400, 100, watermark_text)
+            pdf.save()
+
+        # Add watermark to each page
+        for page in pdf_reader.pages:
+            page.merge_page(pdf_reader.getPage(0))
+            pdf_writer.addPage(page)
+
+        # Save the watermarked PDF
+        with open("output.pdf", "wb") as output_file:
+            pdf_writer.write(output_file)
+
+        st.success("Watermarked PDF saved as 'output.pdf'")
+
+if __name__ == "__main__":
+    main()
