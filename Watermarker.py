@@ -1,38 +1,25 @@
 #WaterMarker v0.1, watermark your PDFs in a click beat!
 
 import streamlit as st
-from pathlib import Path
+from io import BytesIO
 from PyPDF2 import PdfWriter, PdfReader
 
-def add_watermark_to_pdf(input_pdf, output_pdf_path, watermark_text):
-    """
-    Adds a watermark (text) to each page of the input PDF file.
+def add_watermark_to_pdf(input_pdf, watermark_text):
 
-    Args:
-        input_pdf_path (str): Path to the input PDF file.
-        output_pdf_path (str): Path to save the output PDF file.
-        watermark_text (str): Text to be used as the watermark.
-
-    Returns:
-        None
-    """
     pdf_reader = PdfReader(input_pdf)
     pdf_writer = PdfWriter()
 
-    for page_num, page in enumerate(pdf_reader.pages, start=1):
-        # Create a new page with the watermark
-        watermark_page = pdf_reader.getPage(page_num)
-        watermark_page.mergePage(page)
-
+    for page in pdf_reader.pages:
         # Add the watermark text
-        watermark_page.merge_text(watermark_text, x=100, y=100, fontsize=20)
-
+        page.merge_text(watermark_text, x=100, y=100, fontsize=20)
         # Add the modified page to the output PDF
-        pdf_writer.addPage(watermark_page)
+        pdf_writer.add_page(page)
 
-    # Save the output PDF
-    with open(output_pdf_path, "wb") as output_file:
-        pdf_writer.write(output_file)
+    # Save the output PDF to a bytes buffer
+    output_pdf = BytesIO()
+    pdf_writer.write(output_pdf)
+    output_pdf.seek(0)
+    return output_pdf
 
 #Setup The Streamlit Screen
 st.set_page_config(layout="wide")
@@ -48,11 +35,18 @@ with st.expander('About This App'):
     st.write('Email me at sean@positiveatwork.co.uk with any feedback, or raise an issue on GitHub https://github.com/PositivePython42/WaterMarket/issues')
 st.header('Upload your data here')
 st.subheader('Please make sure the file is a PDF.')
-uploaded_file = st.file_uploader("Choose a file")
+uploaded_file = st.file_uploader("Choose a file", type="pdf")
+watermark_text = st.text_area("Watermark Text :", max_chars=250)
 
 #Main Programe Loop
 if uploaded_file is not None:
-    input_text = st.text_input("Watermark Text :")
-    if input_text is not None:
-        add_watermark_to_pdf(uploaded_file, input_text, 'watermarkedfile.pdf')
+    # Add watermark to the PDF
+    watermarked_pdf = add_watermark_to_pdf(uploaded_file, watermark_text)
 
+    # Display download button for the watermarked PDF
+    st.download_button(
+        label="Download Watermarked PDF",
+        data=watermarked_pdf,
+        file_name="output.pdf",
+        mime="application/pdf"
+    )
