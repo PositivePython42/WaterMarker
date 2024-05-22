@@ -51,7 +51,7 @@ if uploaded_file is not None:
         mime="application/pdf"
     )"""
 
-=import streamlit as st
+import streamlit as st
 from PyPDF2 import PdfReader, PdfWriter
 
 def watermark_pdf(input_pdf, watermark_text, output_filename):
