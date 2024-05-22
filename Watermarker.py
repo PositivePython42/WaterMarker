@@ -36,8 +36,8 @@ if uploaded_file is not None:
     if len(watermark_text) > 250:
       st.error("Watermark text exceeds character limit (250 characters)")
     else:
-      with open(uploaded_file.name, 'rb') as input_pdf:
-        output_filename = f"watermarked_{uploaded_file.name}"
+      with open(uploaded_file, 'rb') as input_pdf:
+        output_filename = f"watermarked_{uploaded_file}"
         watermark_pdf(input_pdf, watermark_text, output_filename)
         st.success(f"Watermark added! Download your watermarked PDF: {output_filename}")
         st.download_button("Download", data=open(output_filename, 'rb').read(), file_name=output_filename)
