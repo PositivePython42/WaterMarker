@@ -2,10 +2,9 @@
 
 import streamlit as st
 from pathlib import Path
-from typing import Union, Literal, List
 from PyPDF2 import PdfWriter, PdfReader
 
-def add_watermark_to_pdf(content_pdf, watermark_text: str, pdf_result: Path):
+def add_watermark_to_pdf(content_pdf, watermark_text):
     # Create a watermark page with the specified text
     watermark_page = PdfReader().add_page(width=100, height=100)
     watermark_page.merge_text_watermark(watermark_text)
@@ -42,6 +41,6 @@ uploaded_file = st.file_uploader("Choose a file")
 #Main Programe Loop
 if uploaded_file is not None:
     input_text = st.text_input("Watermark Text :")
-    if input_text is not None:
-        add_watermark_to_pdf(uploaded_file, input_text, 'watermarkedfile.pdf')
+if input_text is not None:
+    add_watermark_to_pdf(uploaded_file, input_text, 'watermarkedfile.pdf')
 
