@@ -39,7 +39,7 @@ if uploaded_file is not None and watermark_text and save_as:
     c = canvas.Canvas(watermark_file)
     c.setFont("Helvetica", 30)  # Adjust font and size as desired
     c.setFillColorRGB(0.8, 0.8, 0.8)  # Set gray color (opacity can be adjusted)
-    c.drawCentredString(watermark_file.name, 300, 200)  # Center watermark
+    c.drawCenteredString(watermark_file.name, 300, 200)  # Center watermark
     c.save()
 
   try:
